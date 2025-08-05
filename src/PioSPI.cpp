@@ -91,7 +91,7 @@ void PioSPI::adjustBuffer(const void *s, void *d, size_t cnt, bool by16) {
     }
 }
 
-byte PioSPI::transfer(uint8_t data) {
+uint8_t PioSPI::transfer(uint8_t data) {
     uint8_t ret;
     if (!_initted) {
         return 0;
@@ -128,14 +128,14 @@ void PioSPI::transfer(void *buf, size_t count) {
     DEBUGPIOSPI("SPI::transfer completed\n");
 }
 
-void PioSPI::transfer(void *txbuf, void *rxbuf, size_t count) {
+void PioSPI::transfer(const void *txbuf, void *rxbuf, size_t count) {
     if (!_initted) {
         return;
     }
 
     DEBUGPIOSPI("SPI::transfer(%p, %p, %d)\n", txbuf, rxbuf, count);
-    uint8_t *txbuff = reinterpret_cast<uint8_t *>(txbuf);
-    uint8_t *rxbuff = reinterpret_cast<uint8_t *>(rxbuf);
+    uint8_t *txbuff = (uint8_t*)(txbuf);
+    uint8_t *rxbuff = (uint8_t*)(rxbuf);
 
     if (_BITORDER == MSBFIRST) {
         if (rxbuf == NULL) { 
@@ -265,4 +265,18 @@ void PioSPI::end() {
     _running = false ;
 }
 
+void PioSPI::usingInterrupt(int interruptNumber) {
 
+}
+
+void PioSPI::notUsingInterrupt(int interruptNumber) {
+
+}
+
+void PioSPI::attachInterrupt() {
+
+}
+
+void PioSPI::detachInterrupt() {
+
+}

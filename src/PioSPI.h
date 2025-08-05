@@ -28,40 +28,35 @@ extern "C" {
 #include "pio_spi.h"
 }
 
-class PioSPI : public SPIClass {
+class PioSPI : public arduino::HardwareSPI {
 public:
     PioSPI(pin_size_t tx, pin_size_t rx, pin_size_t sck, pin_size_t cs ,uint8_t data_mode, uint32_t frequency);
 
-    // Send or receive 8- or 16-bit data.  Returns read back value
-    byte transfer(uint8_t data) ;
-    uint16_t transfer16(uint16_t data) ;
+    uint8_t transfer(uint8_t data) override;
+    uint16_t transfer16(uint16_t data) override;
+    void transfer(void *buf, size_t count) override;
 
-    // Sends buffer in 8 bit chunks.  Overwrites buffer with read data
-    void transfer(void *buf, size_t count) ;
+    // EFP3 - Additional block-based versions we implement
+    void transfer(const void *txbuf, void *rxbuf, size_t count) override;
 
-    // Sends one buffer and receives into another, much faster! can set rx or txbuf to NULL
-    void transfer(void *txbuf, void *rxbuf, size_t count);
+    // Transaction Functions
+    void usingInterrupt(int interruptNumber) override;
+    void notUsingInterrupt(int interruptNumber) override;
+    void beginTransaction(SPISettings settings) override;
+    void endTransaction(void) override;
 
-    // Call before/after every complete transaction
-    void beginTransaction(SPISettings settings);
-    void endTransaction(void);
+    // SPI Configuration methods
+    void attachInterrupt() override;
+    void detachInterrupt() override;
 
-    //Not implemented ...
-    void usingInterrupt(int interruptNumber){};
-    void notUsingInterrupt(int interruptNumber){};
-    void attachInterrupt(){};
-    void detachInterrupt(){};
-
+    void begin() override;
+    void end() override;
 
     // Assign pins, call before begin()
     bool setRX(pin_size_t pin);
     bool setCS(pin_size_t pin);
     bool setSCK(pin_size_t pin);
     bool setTX(pin_size_t pin);
-
-    // Call once to init/deinit SPI class, select pins, etc.
-    void begin()  ;
-    void end() ;
 
 private:
     bool cpol();
